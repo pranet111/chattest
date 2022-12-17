@@ -2,7 +2,7 @@
   "name": "my-chat-website",
   "version": "1.0.0",
   "description": "A chat website built with Node.js",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "start": "node index.js",
     "test": "jest"
