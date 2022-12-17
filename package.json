@@ -1,19 +1,12 @@
 {
-  "name": "my-chat-website",
+  "name": "chat-app",
   "version": "1.0.0",
-  "description": "A chat website built with Node.js",
+  "description": "A simple chat app in Node.js",
   "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest"
+    "start": "node server.js"
   },
-  "author": "Your Name",
-  "license": "MIT",
   "dependencies": {
-    "ejs": "^3.1.5",
-    "express": "^4.17.1"
-  },
-  "devDependencies": {
-    "jest": "^26.6.3"
+    "http": "latest"
   }
 }
