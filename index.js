@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
 
-// Use express middleware to parse request body
+// Use express middleware to parse request body and set up EJS templating
 app.use(express.json());
+app.set('view engine', 'ejs');
 
 // Set up a route to handle user registration
 app.post('/register', (req, res) => {
@@ -34,16 +34,35 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Set up Socket.io to handle real-time chat
-io.on('connection', socket => {
-  socket.on('join room', roomId => {
-    socket.join(roomId);
-  });
-  socket.on('send message', data => {
-    const { roomId, message } = data;
-    // Send the message to all users in the room
-    io.to(roomId).emit('new message', message);
-  });
+// Set up a route to render the chat page
+app.get('/chat', (req, res) => {
+  // Authenticate the user and get their messages
+  const user = authenticate(req);
+  if (!user) {
+    res.redirect('/login');
+  } else {
+    Message.find({ user: user._id }).then(messages => {
+      res.render('chat', { messages });
+    }).catch(err => {
+      res.status(500).send(err.message);
+    });
+  }
+});
+
+// Set up a route to handle AJAX requests to send messages
+app.post('/send-message', (req, res) => {
+  // Authenticate the user and save the message to the database
+  const user = authenticate(req);
+  if (!user) {
+    res.status(401).send('You must be logged in to send a message');
+  } else {
+    const { message } = req.body;
+    Message.create({ user: user._id, message }).then(() => {
+      res.send('Message sent successfully');
+    }).catch(err => {
+      res.status(500).send(err.message);
+    });
+  }
 });
 
 // Start the server
